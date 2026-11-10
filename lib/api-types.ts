@@ -10,6 +10,7 @@ export type FactResponse = {
 export type ErrorCode =
   | "UNAUTHENTICATED"
   | "ONBOARDING_REQUIRED"
+  | "GENERATION_IN_PROGRESS"
   | "FACT_UNAVAILABLE"
   | "INTERNAL";
 

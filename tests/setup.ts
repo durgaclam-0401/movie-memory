@@ -8,7 +8,7 @@ if (!process.env.DATABASE_URL?.includes("_test")) {
 // Every test starts with empty tables.
 beforeEach(async () => {
   await prisma.$executeRawUnsafe(
-    `TRUNCATE "Fact", "Session", "Account", "VerificationToken", "User" CASCADE`,
+    `TRUNCATE "Fact", "FactGenerationLock", "Session", "Account", "VerificationToken", "User" CASCADE`,
   );
   // Generation failures are logged on purpose; keep test output readable.
   vi.spyOn(console, "error").mockImplementation(() => {});
