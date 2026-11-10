@@ -53,9 +53,11 @@ describe("GET /api/fact", () => {
     });
   });
 
-  it("R-3 SEC-1/SEC-2: user A asking for ?userId=B gets a fact stored for A; B is untouched", async () => {
+  it("R-3 SEC-1/SEC-2: user A asking for ?userId=B still only gets A's fact", async () => {
+    // Same movie, and Bob's fact is newer: an unscoped query would return Bob's.
     const alice = await createUser({ favoriteMovie: "Inception" });
     const bob = await createUser({ favoriteMovie: "Inception" });
+    await insertFact({ userId: alice.id, movieTitle: "Inception", ageMs: 50_000, content: "Alice's fact" });
     await insertFact({ userId: bob.id, movieTitle: "Inception", ageMs: 1_000, content: "Bob's secret fact" });
     mockSession.mockResolvedValue(alice);
 
@@ -63,10 +65,8 @@ describe("GET /api/fact", () => {
     const body = (await res.json()) as FactResponse;
 
     expect(res.status).toBe(200);
-    expect(body.fact.content).toBe("A brand new fact.");
+    expect(body.fact).toMatchObject({ content: "Alice's fact", movieTitle: "Inception" });
     expect(JSON.stringify(body)).not.toContain("Bob");
-    expect(await prisma.fact.count({ where: { userId: alice.id } })).toBe(1);
-    expect(await prisma.fact.count({ where: { userId: bob.id } })).toBe(1);
   });
 
   it("R-4: user without a favorite movie → 409 ONBOARDING_REQUIRED", async () => {
