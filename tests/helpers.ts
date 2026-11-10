@@ -49,3 +49,5 @@ export function fakeGenerator(opts: { fail?: boolean; delayMs?: number } = {}) {
   };
   return generator satisfies FactGenerator;
 }
+
+export const fastWait = { waitPollMs: 20, waitMaxMs: 3_000 };
