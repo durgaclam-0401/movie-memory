@@ -22,6 +22,22 @@ model User {
 
   accounts Account[]
   sessions Session[]
+  facts    Fact[]
+}
+
+/// One generated fact. `movieTitle` is the title the fact was generated for,
+/// so the cache key (userId, movieTitle) is a single indexed lookup.
+model Fact {
+  id         String   @id @default(cuid())
+  userId     String
+  movieTitle String   @db.VarChar(100)
+  content    String
+  /// Written by lib/facts.ts from the app clock (see REPORT §5.1).
+  createdAt  DateTime @default(now()) @db.Timestamptz(3)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, movieTitle, createdAt(sort: Desc)])
 }
 
 // ---- Auth.js (Prisma adapter) models ----
