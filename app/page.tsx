@@ -1,10 +1,10 @@
 import { redirect } from "next/navigation";
 import { getSessionUser, signIn } from "@/lib/auth";
 
-// AUTH-1: landing page when logged out; signed-in users go to the dashboard.
+// AUTH-1 / AUTH-3: landing page when logged out; otherwise route by onboarding state.
 export default async function Home() {
   const user = await getSessionUser();
-  if (user) redirect("/dashboard");
+  if (user) redirect(user.favoriteMovie ? "/dashboard" : "/onboarding");
 
   async function signInWithGoogle() {
     "use server";
