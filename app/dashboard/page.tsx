@@ -1,12 +1,17 @@
+import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
 import { signOutAction } from "./actions";
 
 export default async function DashboardPage() {
   const user = await requireUser(); // AUTH-4
+  if (!user.favoriteMovie) redirect("/onboarding"); // DASH-4
 
   return (
     <section className="flex items-center justify-between rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
-      <p>Signed in as {user.email}</p>
+      <div>
+        <p>Signed in as {user.email}</p>
+        <p className="mt-1 font-semibold">Favorite movie: {user.favoriteMovie}</p>
+      </div>
       <form action={signOutAction}>
         <button
           type="submit"
