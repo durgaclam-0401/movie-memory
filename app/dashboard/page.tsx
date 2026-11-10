@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
 import { displayName, initials } from "@/lib/display";
 import { signOutAction } from "./actions";
+import { FactCard } from "./FactCard";
 
 export default async function DashboardPage() {
   const user = await requireUser(); // AUTH-4
@@ -49,6 +50,7 @@ export default async function DashboardPage() {
           Favorite movie
         </p>
         <p className="mt-1 text-2xl font-bold">{user.favoriteMovie}</p>
+        <FactCard />
       </section>
     </div>
   );
