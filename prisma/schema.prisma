@@ -23,6 +23,7 @@ model User {
   accounts Account[]
   sessions Session[]
   facts    Fact[]
+  factLock FactGenerationLock?
 }
 
 /// One generated fact. `movieTitle` is the title the fact was generated for,
@@ -38,6 +39,17 @@ model Fact {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, movieTitle, createdAt(sort: Desc)])
+}
+
+/// "A fact is being generated for this user." At most one row per user.
+/// Acquired/released with raw SQL in lib/lease.ts (see REPORT §5.2).
+model FactGenerationLock {
+  userId    String   @id
+  token     String
+  /// timestamptz: compared against Postgres now(), so it must be an absolute instant.
+  expiresAt DateTime @db.Timestamptz(3)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 // ---- Auth.js (Prisma adapter) models ----
