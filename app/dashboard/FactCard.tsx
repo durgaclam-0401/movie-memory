@@ -52,7 +52,14 @@ export function FactCard() {
       )}
 
       {state.status === "ready" && (
-        <p className="mt-2 text-slate-800">{state.data.fact.content}</p>
+        <>
+          <p className="mt-2 text-slate-800">{state.data.fact.content}</p>
+          {state.data.source === "stale-fallback" && (
+            <p className="mt-2 text-xs text-amber-800">
+              We couldn&apos;t fetch a new fact, so here&apos;s an earlier one.
+            </p>
+          )}
+        </>
       )}
 
       {state.status === "error" && (

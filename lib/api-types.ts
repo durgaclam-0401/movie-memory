@@ -1,6 +1,6 @@
 // Shared contract for GET /api/fact (SPEC §5). Safe to import from client code.
 
-export type FactSource = "cache" | "fresh";
+export type FactSource = "cache" | "fresh" | "stale-fallback";
 
 export type FactResponse = {
   fact: { content: string; movieTitle: string; createdAt: string };

@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import type { FactSource } from "@/lib/api-types";
 import { FactUnavailableError, OnboardingRequiredError } from "@/lib/errors";
 
-// Variant A core: 60 s cache window.
+// Variant A core: 60 s cache window, failure fallback.
 // Walkthrough with timelines: docs/REPORT.md §5.
 
 export const CACHE_WINDOW_MS = 60_000;
@@ -56,7 +56,8 @@ export async function getFactForUser(
       userId,
       error: err instanceof Error ? `${err.name}: ${err.message}` : String(err),
     });
-    throw new FactUnavailableError();
+    if (latest) return { fact: latest, source: "stale-fallback" }; // FAIL-2
+    throw new FactUnavailableError(); // FAIL-3 (nothing written: FAIL-5)
   }
 
   const fact = await prisma.fact.create({
